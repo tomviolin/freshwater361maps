@@ -1,5 +1,5 @@
 
-install.packages("R.utils")
+loadlibrary(R.utils)
 loadlibrary(tictoc)
 # raw data read into sdata ----
 #  3.7 MILLION RECORDS!
@@ -8,16 +8,17 @@ sdata = data.table::fread("shiphistory_10sec.csv.gz")
 toc() }
 # convert types to sdatatf (types fixed)  ----
 sdatatf = data.frame(list(
+  recdate = sdata$recdate,
   GPS_Lat = as.double(sdata$GPS_Lat),
   GPS_Long = as.double(sdata$GPS_Long),
-  Temp_c = as.double(sdata$Temp_c),
+  Temp_C = as.double(sdata$Temp_C),
   Depth_m = as.double((sdata$Depth_m))
 ))
 
 # filter NA-free data ----
 filter = (!is.na(sdatatf$GPS_Lat)) & 
          (!is.na(sdatatf$GPS_Long)) & 
-         (!is.na(sdatatf$Temp_c)) & 
+         (!is.na(sdatatf$Temp_C)) & 
          (!is.na(sdatatf$Depth_m))
 
 # print filter info ----
@@ -36,7 +37,7 @@ sum(sdatanaf$GPS_Lat < 30)
 sum(sdatanaf$GPS_Lat > 60)
 
 # example data destructive error!!
-sum(sdatanaf$GPS_Long <-89)
+#sum(sdatanaf$GPS_Long <-89)
 
 sum(sdatanaf$GPS_Long < -90)
 sum(sdatanaf$GPS_Long > -80)
@@ -57,5 +58,5 @@ plot(sdatalocf$GPS_Long,sdatalocf$GPS_Lat,
 dev.off()
 system2("open","shiphistory.png")
 
-fwrite(x=sdatalocf, file="fixedhistory.csv")
-saveRDS(sdatalocf, "fixedhistory.Rds")
+data.table::fwrite(x=sdatalocf, file="fixedhistory.csv")
+#saveRDS(sdatalocf, "fixedhistory.Rds")

@@ -7,8 +7,8 @@ loadlibrary(data.table)
 dataraw = fread("fixedhistory.csv") #[1:800000,]
 data = dataraw[
   (dataraw$GPS_Lat > 43.015) &
-  (dataraw$GPS_Lat < 43.030) &
-  (dataraw$GPS_Long < -87.88),]
+    (dataraw$GPS_Lat < 43.030) &
+    (dataraw$GPS_Long < -87.88),]
 # Establish bounding box for map view ----
 bbox = sf::st_bbox(c(xmax=max(data$GPS_Long)+0.001,xmin=min(data$GPS_Long)-0.001,ymax=max(data$GPS_Lat)+0.001,ymin=min(data$GPS_Lat))-0.0001,crs=4623)
 # Fetch tiles ----

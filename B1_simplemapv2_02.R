@@ -7,7 +7,14 @@ data = read.csv("shipdata2025-09-20.csv")
 # Establish bounding box for map view ----
 bbox = sf::st_bbox(c(xmax=max(data$GPS_Long)+0.001,xmin=min(data$GPS_Long)-0.001,ymax=max(data$GPS_Lat)+0.001,ymin=min(data$GPS_Lat))-0.0001,crs=4623)
 # Fetch tiles ----
-tiles_map <- get_tiles(x = bbox, provider = "OpenStreetMap",zoom=15, crop=TRUE)
+# Create a provider from a custom url
+osm_tiles <- create_provider(
+  name = "osm_tiles",
+  url =  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  citation = "© OpenStreetMap contributors."
+)
+
+tiles_map <- get_tiles(x = bbox, provider ="OpenStreetMap",zoom=16, crop=TRUE, retina = TRUE)
 # Output to PDF ----
 pdf("shipmap.pdf")
 # Plot the tiles ----
