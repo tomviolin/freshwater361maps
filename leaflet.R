@@ -47,4 +47,6 @@ m = leaflet() %>%
 print(m)
 
 loadlibrary(rgl)
-plot3d(x=data$GPS_Long,y=data$GPS_Lat,z=-data$Depth_m,col = trackcolors)
+plot3d(x=data$GPS_Long,y=data$GPS_Lat,z=-data$Depth_m,col = trackcolors,aspect = c(1,1,.1))
+
+loadlibrary(akima)
