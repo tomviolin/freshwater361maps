@@ -316,8 +316,8 @@ for (i in 1:nrow(datawind)) {
   pdmax =  max(pdepth)
   pdnorm = pdepth / max(pdepth)  # range of 0..1
   
-  plotd = bbox_data[2] - (bbox_data[2] - map_bbox[2]) * pdnorm
-  lines(datasub$GPS_Long, plotd, lwd=3, col="#654321")
+  plotd = bbox_data[2] - (bbox_data[2] - map_bbox[2]) * (pdnorm*0.5)
+  polygon(c(datasub$GPS_Long, rev(datasub$GPS_Long)), c(plotd,rep(map_bbox[2],length(plotd))), lwd=3, col="#654321")
   lines(datasub$GPS_Long, rep(bbox_data[2],length(datasub$GPS_Long)),col="blue")
   
   #points(range(data$GPS_Long),range(data$GPS_Lat),cex=2,col='red')
