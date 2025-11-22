@@ -25,6 +25,78 @@ loadlibrary(emojifont)
 }
 
 
+# Function to display the custom message box
+messagebox <- function() {
+  result_var = tclVar("")
+  # Create the top-level window
+  tclServiceMode(FALSE)
+  toplevel <- tktoplevel()
+  
+  screenWidth_px <- as.numeric(tclvalue(tcl("winfo", "screenwidth", toplevel)))
+  screenHeight_px <- as.numeric(tclvalue(tcl("winfo", "screenheight", toplevel)))
+  
+  
+  tkwm.withdraw(toplevel)
+  tktitle(toplevel) <- "QUIT"
+  # Set the geometry (tcltk uses 'wm geometry' directly on the window handle)
+  tclvalue(tcl("wm", "geometry", toplevel, "400x200+"+(screenWidth_px-410)+"+"+as.character(screenHeight_px-210)))
+  
+  # Add widgets using 'tkgrid' for layout similar to Python's grid manager
+  
+  # Label for the question icon
+  # The '::tk::icons::question' image is available in Tcl/Tk by default
+  l1 <- tklabel(toplevel, image = "::tk::icons::question")
+  tkgrid(l1, row = 0, column = 0, pady = c(7, 0), padx = c(10, 30), sticky = "e")
+  
+  # Label for the text prompt
+  l2 <- tklabel(toplevel, text = "Are you sure you want to Quit")
+  # Use 'columnspan' (as 'columnspan') to span columns
+  tkgrid(l2, row = 0, column = 1, columnspan = 3, pady = c(7, 10), sticky = "w")
+  
+  # Yes button: command to destroy the main root window (tkdestroy(root))
+  b1 <- tkbutton(
+    toplevel, 
+    text = "Yes",
+    command = function() {
+      print("yes button")
+      tclvalue(result_var) = "yes"
+      tkdestroy(toplevel)
+    },
+    width = 10
+  )
+  tkgrid(b1, row = 1, column = 1, padx = c(2, 35), sticky = "e")
+    
+  # No button: command to destroy the current top-level window (tkdestroy(toplevel))
+  # Yes button: command to destroy the main root window (tkdestroy(root))
+  b2 <- tkbutton(
+    toplevel, 
+    text = "No",
+    command = function() {
+      print("no button")
+      tclvalue(result_var) = "no"
+      tkdestroy(toplevel)
+    },
+    width = 10
+  )
+  tkgrid(b2, row = 1, column = 2, padx = c(2, 35), sticky = "e")
+  
+  # Ensure the toplevel window grabs focus and blocks input to other windows until closed
+  
+  # Re-enable Tcl/Tk event processing
+  tclServiceMode(TRUE)
+  
+  # Make the window appear
+  tkwm.deiconify(toplevel)
+  
+  tkfocus(toplevel)
+  tkwait.window(toplevel)
+  return (tclvalue(result_var))
+}
+
+
+
+
+
 # Automatically enable showtext for plotting
 showtext.auto()
 
@@ -277,7 +349,7 @@ text(x = h$mids, y = h$counts, labels = h$counts, pos = 3, offset = -1.0)
 system("sleep 1",wait=TRUE)
 
 
-result = as.character(tk_messageBox("okcancel","Proceed?"))
+result = as.character(messagebox())
 if (result != "ok") break
 for (i in 1:nrow(datawind)) {
   datasub = data[data$rechour == datawind[i,]$dhour,]
@@ -365,10 +437,7 @@ for (i in 1:nrow(datawind)) {
   dev.off() # only if saving to file
   #system("evince shipgap.pdf;sleep 3", wait=F)
 
-  result = tkmessageBox(title="Continue?",
-                        message="Do you want the next one?",
-                        icon='question',
-                        type='yesno')
+  result = messagebox()
     if (as.character(result) != 'yes') {
     break
   }
